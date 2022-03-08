@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="https://www.omg.org/spec/DMN/20191111/MODEL/" xmlns:dmndi="https://www.omg.org/spec/DMN/20191111/DMNDI/" xmlns:dc="http://www.omg.org/spec/DMN/20180521/DC/" xmlns:camunda="http://camunda.org/schema/1.0/dmn" id="number" name="DRD" namespace="http://camunda.org/schema/1.0/dmn" exporter="Camunda Modeler" exporterVersion="4.12.0">
+  <decision id="number-nature-1" name="number-nature">
+    <decisionTable id="DecisionTable_1maqc1x">
+      <input id="Input_1" label="user input" camunda:inputVariable="input1">
+        <inputExpression id="InputExpression_1" typeRef="integer">
+          <text></text>
+        </inputExpression>
+      </input>
+      <output id="Output_1" label="Nature of Number" name="nature" typeRef="string" />
+      <rule id="DecisionRule_0tpjtaj">
+        <inputEntry id="UnaryTests_09yhhob">
+          <text>0</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_0980sgj">
+          <text>"zero"</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_16hk3m0">
+        <inputEntry id="UnaryTests_0pm8bam">
+          <text>&lt; 0</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_0folhap">
+          <text>"negative"</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_11akg0s">
+        <inputEntry id="UnaryTests_0xu9tcx">
+          <text>&gt; 0</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_0e8t5hq">
+          <text>"positive"</text>
+        </outputEntry>
+      </rule>
+    </decisionTable>
+  </decision>
+  <dmndi:DMNDI>
+    <dmndi:DMNDiagram>
+      <dmndi:DMNShape dmnElementRef="number-nature-1">
+        <dc:Bounds height="80" width="180" x="160" y="100" />
+      </dmndi:DMNShape>
+    </dmndi:DMNDiagram>
+  </dmndi:DMNDI>
+</definitions>

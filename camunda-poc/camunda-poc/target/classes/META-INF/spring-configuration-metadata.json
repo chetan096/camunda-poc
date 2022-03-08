@@ -1,0 +1,18 @@
+{
+  "groups": [
+    {
+      "name": "camunda.datasource",
+      "type": "javax.sql.DataSource",
+      "sourceType": "com.example.workflow.config.DatabaseConfiguration",
+      "sourceMethod": "public javax.sql.DataSource secondaryDataSource() "
+    },
+    {
+      "name": "primary.datasource",
+      "type": "javax.sql.DataSource",
+      "sourceType": "com.example.workflow.config.DatabaseConfiguration",
+      "sourceMethod": "public javax.sql.DataSource primaryDataSource() "
+    }
+  ],
+  "properties": [],
+  "hints": []
+}

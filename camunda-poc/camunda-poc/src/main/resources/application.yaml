@@ -1,0 +1,22 @@
+camunda.bpm:
+          admin-user:
+            id: chetan
+            password: 12345
+          authorization:
+            enabled: true
+camunda:
+  datasource:
+    jdbc-url: jdbc:mysql://${MYSQL_HOST:localhost}:3306/camunda_poc
+    username: root
+    password: root
+primary:
+  datasource:
+    jdbc-url: jdbc:mysql://${MYSQL_HOST:localhost}:3306/fab
+    username: root
+    password: root
+spring:
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    

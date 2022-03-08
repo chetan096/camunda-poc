@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_1x5a072" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="4.12.0" modeler:executionPlatform="Camunda Platform" modeler:executionPlatformVersion="7.15.0">
+  <bpmn:collaboration id="Collaboration_15eh167">
+    <bpmn:participant id="Participant_1km9dj4" name="Callaboration POC" processRef="Callaboration_poc" />
+  </bpmn:collaboration>
+  <bpmn:process id="Callaboration_poc" name="Callaboration_poc" isExecutable="true">
+    <bpmn:laneSet id="LaneSet_0xoifgb">
+      <bpmn:lane id="Lane_0oolobh" name="Employee">
+        <bpmn:flowNodeRef>StartEvent_1</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Activity_1a1o33f</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Activity_107ngkg</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Activity_09oviow</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Event_1f6nfv6</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Event_06bo5f1</bpmn:flowNodeRef>
+      </bpmn:lane>
+      <bpmn:lane id="Lane_02svlh1" name="Scrum Master">
+        <bpmn:flowNodeRef>Activity_1e8yxqx</bpmn:flowNodeRef>
+      </bpmn:lane>
+      <bpmn:lane id="Lane_13f8k81" name="Delivery Manager">
+        <bpmn:flowNodeRef>Gateway_1apzf4l</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Activity_1t85ogm</bpmn:flowNodeRef>
+      </bpmn:lane>
+    </bpmn:laneSet>
+    <bpmn:startEvent id="StartEvent_1">
+      <bpmn:outgoing>Flow_1byybdz</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:sequenceFlow id="Flow_1byybdz" sourceRef="StartEvent_1" targetRef="Activity_1a1o33f" />
+    <bpmn:userTask id="Activity_1a1o33f" name="Enter Jira Task name" camunda:candidateGroups="EmployeeGrp">
+      <bpmn:extensionElements>
+        <camunda:formData>
+          <camunda:formField id="task" type="string" />
+        </camunda:formData>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1byybdz</bpmn:incoming>
+      <bpmn:outgoing>Flow_1calsjt</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:sequenceFlow id="Flow_1calsjt" sourceRef="Activity_1a1o33f" targetRef="Activity_1e8yxqx" />
+    <bpmn:sequenceFlow id="Flow_1u8r1rn" sourceRef="Activity_1e8yxqx" targetRef="Activity_1t85ogm" />
+    <bpmn:userTask id="Activity_1e8yxqx" name="Approve Jira Task" camunda:candidateGroups="ScrumMasters">
+      <bpmn:extensionElements>
+        <camunda:formData>
+          <camunda:formField id="scrumMasterApproved" label="Approve or Reject" type="boolean" />
+        </camunda:formData>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1calsjt</bpmn:incoming>
+      <bpmn:outgoing>Flow_1u8r1rn</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:exclusiveGateway id="Gateway_1apzf4l">
+      <bpmn:incoming>Flow_0pfqxcm</bpmn:incoming>
+      <bpmn:outgoing>Flow_0byoy37</bpmn:outgoing>
+      <bpmn:outgoing>Flow_18gldzo</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="Flow_0pfqxcm" sourceRef="Activity_1t85ogm" targetRef="Gateway_1apzf4l" />
+    <bpmn:sequenceFlow id="Flow_0byoy37" name="rejected" sourceRef="Gateway_1apzf4l" targetRef="Activity_107ngkg">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">#{dmApproved==false}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_18gldzo" name="approved" sourceRef="Gateway_1apzf4l" targetRef="Activity_09oviow">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">#{dmApproved==true}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:serviceTask id="Activity_107ngkg" name="Send rejected email" camunda:class="com.example.workflow.services.RejectEmail">
+      <bpmn:incoming>Flow_0byoy37</bpmn:incoming>
+      <bpmn:outgoing>Flow_13ss5ad</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_13ss5ad" sourceRef="Activity_107ngkg" targetRef="Event_06bo5f1" />
+    <bpmn:sequenceFlow id="Flow_0rzwvsd" sourceRef="Activity_09oviow" targetRef="Event_1f6nfv6" />
+    <bpmn:serviceTask id="Activity_09oviow" name="Send Approved email" camunda:class="com.example.workflow.services.ApprovedEmail">
+      <bpmn:incoming>Flow_18gldzo</bpmn:incoming>
+      <bpmn:outgoing>Flow_0rzwvsd</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:endEvent id="Event_1f6nfv6">
+      <bpmn:incoming>Flow_0rzwvsd</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:endEvent id="Event_06bo5f1">
+      <bpmn:incoming>Flow_13ss5ad</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:userTask id="Activity_1t85ogm" name="Approve Jira Task" camunda:candidateGroups="DeliveryManagers">
+      <bpmn:extensionElements>
+        <camunda:formData>
+          <camunda:formField id="dmApproved" label="Approve or Reject" type="boolean" />
+        </camunda:formData>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1u8r1rn</bpmn:incoming>
+      <bpmn:outgoing>Flow_0pfqxcm</bpmn:outgoing>
+    </bpmn:userTask>
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Collaboration_15eh167">
+      <bpmndi:BPMNShape id="Participant_1km9dj4_di" bpmnElement="Participant_1km9dj4" isHorizontal="true">
+        <dc:Bounds x="129" y="52" width="989" height="490" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Lane_0oolobh_di" bpmnElement="Lane_0oolobh" isHorizontal="true">
+        <dc:Bounds x="159" y="52" width="959" height="250" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Lane_02svlh1_di" bpmnElement="Lane_02svlh1" isHorizontal="true">
+        <dc:Bounds x="159" y="302" width="959" height="120" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Lane_13f8k81_di" bpmnElement="Lane_13f8k81" isHorizontal="true">
+        <dc:Bounds x="159" y="422" width="959" height="120" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_1byybdz_di" bpmnElement="Flow_1byybdz">
+        <di:waypoint x="228" y="170" />
+        <di:waypoint x="280" y="170" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1calsjt_di" bpmnElement="Flow_1calsjt">
+        <di:waypoint x="330" y="210" />
+        <di:waypoint x="330" y="270" />
+        <di:waypoint x="350" y="270" />
+        <di:waypoint x="350" y="320" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1u8r1rn_di" bpmnElement="Flow_1u8r1rn">
+        <di:waypoint x="350" y="400" />
+        <di:waypoint x="350" y="430" />
+        <di:waypoint x="390" y="430" />
+        <di:waypoint x="390" y="450" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0pfqxcm_di" bpmnElement="Flow_0pfqxcm">
+        <di:waypoint x="440" y="490" />
+        <di:waypoint x="495" y="490" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0byoy37_di" bpmnElement="Flow_0byoy37">
+        <di:waypoint x="520" y="465" />
+        <di:waypoint x="520" y="338" />
+        <di:waypoint x="570" y="338" />
+        <di:waypoint x="570" y="210" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="525" y="320" width="40" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_18gldzo_di" bpmnElement="Flow_18gldzo">
+        <di:waypoint x="545" y="490" />
+        <di:waypoint x="870" y="490" />
+        <di:waypoint x="870" y="290" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="684" y="472" width="47" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_13ss5ad_di" bpmnElement="Flow_13ss5ad">
+        <di:waypoint x="620" y="170" />
+        <di:waypoint x="762" y="170" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0rzwvsd_di" bpmnElement="Flow_0rzwvsd">
+        <di:waypoint x="920" y="250" />
+        <di:waypoint x="1012" y="250" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent_1">
+        <dc:Bounds x="192" y="152" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_008whva_di" bpmnElement="Activity_1a1o33f">
+        <dc:Bounds x="280" y="130" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_184389r_di" bpmnElement="Activity_1e8yxqx">
+        <dc:Bounds x="300" y="320" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_1apzf4l_di" bpmnElement="Gateway_1apzf4l" isMarkerVisible="true">
+        <dc:Bounds x="495" y="465" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0i817vs_di" bpmnElement="Activity_107ngkg">
+        <dc:Bounds x="520" y="130" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_02i0i3m_di" bpmnElement="Activity_09oviow">
+        <dc:Bounds x="820" y="210" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1f6nfv6_di" bpmnElement="Event_1f6nfv6">
+        <dc:Bounds x="1012" y="232" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_06bo5f1_di" bpmnElement="Event_06bo5f1">
+        <dc:Bounds x="762" y="152" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1m20ye1_di" bpmnElement="Activity_1t85ogm">
+        <dc:Bounds x="340" y="450" width="100" height="80" />
+      </bpmndi:BPMNShape>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>
